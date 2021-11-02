@@ -1,63 +1,103 @@
 <template>
   <div class="form">
-    <div class="row justify-content-center">
-        <div class="col-6 justify-content-center border">
-            <div class="col mx-5 no-gutters border">
-                <b-form-input v-model="text" placeholder="Enter your name"></b-form-input>
-                <b-form-input v-model="text" placeholder="Enter your Surname"></b-form-input>
-                <b-form-select v-model="selected" :options="options"></b-form-select>
-                <b-form-input v-model="text" placeholder="Enter your email"></b-form-input>
-                <b-form-input v-model="text" placeholder="Enter your Phone Number"></b-form-input>
-                <b-form-input v-model="text" placeholder="Enter your Age"></b-form-input>
-                <b-form-input v-model="text" placeholder="Enter your TC"></b-form-input>
-                <b-form-input v-model="text" placeholder="Enter your HES Code"></b-form-input>
+    <div class="flex-row justify-content-between">
+        <div class="flex-col justify-content-between mx-5 mt-2" style="max-width: 25rem;">
+            <div class="col border">
+              <div class="row">
+                <b-form-group>
+                  <b-form-input v-model="$v.name.$model" :state="stateCheck($v.name)" placeholder="Enter your name" aria-describedby="name-feedback"></b-form-input>
+                  <b-form-invalid-feedback id="name-feedback">
+                    This is a required field and must be at least 3 characters.
+                  </b-form-invalid-feedback>                
+                </b-form-group>
+                <b-form-group>
+                  <b-form-input v-model="$v.surname.$model" :state="stateCheck($v.surname)" placeholder="Enter your surname" aria-describedby="surname-feedback"></b-form-input>
+                  <b-form-invalid-feedback id="surname-feedback">
+                    Please enter your surname at least 3 characters.
+                  </b-form-invalid-feedback>  
+                </b-form-group>
+                <b-form-group>
+                  <b-form-input v-model="$v.mail.$model" :state="stateCheck($v.mail)" placeholder="aliveli@vuehotel.com" aria-describedby="mail-feedback"></b-form-input>
+                  <b-form-invalid-feedback id="mail-feedback">
+                    Please enter your email address.
+                  </b-form-invalid-feedback>                
+                </b-form-group>
+                <b-form-group>
+                  <b-form-input v-model="$v.age.$model" :state="stateCheck($v.age)" placeholder="18" aria-describedby="age-feedback"></b-form-input>
+                  <b-form-invalid-feedback id="age-feedback">
+                    Please between 0 - 120.
+                  </b-form-invalid-feedback>                
+                </b-form-group>
+                <b-form-group>
+                  <b-form-input v-model="$v.phone.$model" :state="stateCheck($v.phone)" placeholder="+905011234211" aria-describedby="phone-feedback"></b-form-input>
+                  <b-form-invalid-feedback id="phone-feedback">
+                    Please between 0 - 11.
+                  </b-form-invalid-feedback>                
+                </b-form-group>
+                <b-form-group>
+                  <b-form-input v-model="$v.citizenId.$model" :state="stateCheck($v.citizenId)" placeholder="Turkish Citizen ID" aria-describedby="citizenid-feedback"></b-form-input>
+                  <b-form-invalid-feedback id="citizenid-feedback">
+                    Please at least 11 and just number.
+                  </b-form-invalid-feedback>                
+                </b-form-group>
+                <b-form-group>
+                  <b-form-input v-model="$v.hes.$model" :state="stateCheck($v.hes)" placeholder="HES Code" aria-describedby="citizenid-feedback"></b-form-input>
+                  <b-form-invalid-feedback id="citizenid-feedback">
+                    Please enter HES Code.
+                  </b-form-invalid-feedback>                
+                </b-form-group>
+              </div>
+                                                               
             </div>
         </div>
     </div>
-
   </div>
+
 </template>
 
 <script>
+import {vuelidate} from '@/mixins/global'
+
 export default {
   name: "Form",
   props: {},
+  mixins:[vuelidate],
   data() {
     return {
-      form: {
-        email: "",
-        name: "",
-        food: null,
-        checked: [
-            
-        ],
-      },
-      options: [
-        { value: "Men", text: 'Men' },
-        { value: "Women", text: 'Women' },
-      ],
-      show: true,
+      RezDetail:[Object],
+      totalPerson:1,
+      name:"",
+      surname:"",
+      mail:"",
+      age:"",
+      phone:"",
+      citizenId:"",
+      hes:"",
+      phoneNumber:'',
     };
   },
-  methods: {
-    onSubmit(event) {
-      event.preventDefault();
-      alert(JSON.stringify(this.form));
-    },
-    onReset(event) {
-      event.preventDefault();
-      // Reset our form values
-      this.form.email = "";
-      this.form.name = "";
-      this.form.food = null;
-      this.form.checked = [];
-      // Trick to reset/clear native browser form validation state
-      this.show = false;
-      this.$nextTick(() => {
-        this.show = true;
-      });
-    },
+
+  watch:{
+    
   },
+  computed:{
+
+  },
+  methods: {
+    stateCheck(val){
+      if (val.$dirty && val.$error == false){
+        return true
+      }else if (val.$dirty && val.$error){
+        return false
+      }
+    }
+
+
+  },
+  created() {
+
+  }
+  
 };
 </script>
 

@@ -1,20 +1,4 @@
-export const global = {
-    data(){
-        return {
 
-        }
-    },
-    methods:{
-
-    },
-    computed:{
-        CalDate(){
-            let start = new Date(this.startdate)
-            let end = new Date(this.enddate)
-            return this.stayedDate = ((end - start)/86400000)
-        }
-    }
-}
  // Cmrt Ders
 export const filters = {
     filters: {
@@ -26,7 +10,16 @@ export const filters = {
     }
 }
 
-import { minLength, required, email, numeric, maxLength } from "vuelidate/lib/validators";
+import { minLength, required, email, numeric, maxLength, alpha, between } from "vuelidate/lib/validators";
+
+
+function hesCheck(val) {
+    // Ref: Fatih Ozoglu
+    let reg = /^[A-Z][0-9][A-Z][0-9]-[0-9][0-9][0-9][0-9]-[0-9][0-9]$/g; /// Ex: A1E1-1111-11
+    return reg.test(val);
+}
+
+
 
 
 export const vuelidate = {
@@ -38,14 +31,16 @@ export const vuelidate = {
         surname: {
             required,
             minLength:minLength(3),
+            alpha:alpha,
         },
         mail:{
-          required,
-          email,  
+            required,
+            email,  
         },
         age:{
             required,
             numeric,
+            betweenValue: between(0, 120),
         },
         phone:{
             required,
@@ -55,8 +50,7 @@ export const vuelidate = {
         },
         hes:{
             required,
-            minLength:minLength(11),
-
+            hesCheck
         },
         citizenId:{
             required,

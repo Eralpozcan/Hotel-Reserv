@@ -96,16 +96,16 @@
                     <div class="row">
                         <div class="col-6">
                             <label for="start-datepicker">Start Date</label>
-                            <b-form-datepicker id="start-datepicker" v-model="startdate" class="mb-2" size="sm" placeholder="Choose a start date" locale="en"></b-form-datepicker>
+                            <b-form-datepicker id="start-datepicker" v-model="checkInDate" class="mb-2" size="sm" placeholder="Choose a start date" locale="en" required></b-form-datepicker>
                         </div>
                         <div class="col-6">
                             <label for="end-datepicker">End Date</label>
-                            <b-form-datepicker id="end-datepicker" v-model="enddate" class="mb-2" size="sm" placeholder="Choose a end date" locale="en"></b-form-datepicker>
+                            <b-form-datepicker id="end-datepicker" v-model="checkOutDate" class="mb-2" size="sm" placeholder="Choose a end date" locale="en" required></b-form-datepicker>
                         </div>                  
                     </div>
                     <div class="row">
                         <div class="col">
-                            <b-button variant="gray border" href="/form">
+                            <b-button variant="gray border" @click="goForm">
                                 Next <font-awesome-icon icon="chevron-right"/>
                             </b-button>  
                         </div>
@@ -121,14 +121,14 @@
 </template>
 
 <script>
-import {global} from '@/mixins/global'
+import {vuelidate} from '@/mixins/global'
 import hotels from '@/assets/data/hotel.json'
 
 export default {
   name: 'HotelPage',
   props: {
   },
-  mixins: [global],
+  mixins: [vuelidate],
   data() {
       return {
         hotels,
@@ -136,28 +136,42 @@ export default {
         selected: null,
         itemNumberAdult:1,
         itemNumberChild:1,
-        startdate: '2021',
-        enddate: '2021',
-        dateError: false,
+        checkInDate: '',
+        checkOutDate: '',
       }
     },
   computed:{
       // Toplam ücretin hesabının yapıldığı yer computed fonksiyon
       CalcTotalPrice(){
-          return (this.hotel.motelPrice.adult * this.itemNumberAdult + Math.floor(this.hotel.motelPrice.child * this.itemNumberChild)) * this.CalculateDate
+          return (Math.floor(this.hotel.motelPrice.adult * this.itemNumberAdult) + Math.floor(this.hotel.motelPrice.child * this.itemNumberChild)) * this.CalculateDate
       },
       //Tarih hesabının yapıldığı yer
       CalculateDate(){
-        let start = new Date(this.startdate)
-        let end = new Date(this.enddate)
-        if (start !==null && end !== null) {
-            let result = ((end - start)/86400000)
-            if (result <1) return ''
-                return result
-        }else {
+        if (this.checkInDate != '' && this.checkOutDate != ''){
+            let start = new Date(this.checkInDate)
+            let end = new Date(this.checkOutDate)
+            if (start !==null && end !== null) {
+                let result = ((end - start)/86400000)
+                if (result <1) return ''
+                    return result
+            }else {
+                return 0
+            }
+        }else{
             return 0
         }
+
       },
+    },
+    methods:{
+        goForm(){
+            if(this.checkOutDate != '' && this.checkInDate != ''){
+                this.$router.push({
+                    name: "Rez",
+                    params: { totalPerson: this.itemNumberAdult + this.itemNumberChild,adultCount:this.itemNumberAdult,childCount:this.itemNumberChild,stayDate:this.CalculateDate },
+                });
+            }
+        },
     },
   created(){
       const motelId = this.$route.params.id;
